@@ -1,0 +1,51 @@
+---
+sidebar_position: 2
+---
+
+import DatePicker from "../../src/components/DatePicker"
+
+# DatePicker
+
+The `DatePicker` component is a versatile, responsive UI element designed for effortless date and time selection. It provides an intuitive calendar interface with support for:
+- **Date Range Control:** Limit user selection via `minDate` and `maxDate`.
+- **Localization:** Format dates to various locales using the `locale` prop.
+- **Custom Navigation:** Easily customize navigation controls using `forwardIcon` and `backwardIcon`.
+- **Time Integration:** Optionally incorporate time selection through the `timeModule`.
+
+Built with accessibility in mind, and leveraging DasiyUI and Tailwind CSS, this component ensures a modern, mobile-first experience across all devices.
+
+## Usage
+
+```tsx
+import DatePicker from "react-daisyui-timetools"
+
+<DatePicker value="2025-01-01 12:00" onChange={() => {}} weekStart="sunday" />
+```
+
+### Light (default)
+<div data-theme="light" className="rounded-2xl w-48" style={{ width: "390px" }} >
+  <DatePicker value="2025-01-01 12:00" onChange={() => {}} weekStart="sunday" />
+</div>
+
+## Props
+
+| Prop               | Type                                        | Description                                                                                                   |
+| ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `maxDate`          | `string` (optional)                         | The maximum selectable date. Limits selection to dates on or before this value.                               |
+| `minDate`          | `string` (optional)                         | The minimum selectable date. Limits selection to dates on or after this value.                                |
+| `value`            | `string`                                    | The current selected date/time value.                                                                       |
+| `onChange`         | `(value: string) => void`                     | Callback invoked when the date/time value changes, passing the updated value as a string.                       |
+| `locale`           | `string`                                    | Specifies the locale for date formatting and calendar display (e.g., "en-US").                                  |
+| `placeholder`      | `string` (optional)                         | Placeholder text in the input field when no date is selected.                                                 |
+| `size`             | `"xs" | "sm" | "md" | "lg"` (optional)          | Controls the size variation of the DatePicker UI.                                                             |
+| `forwardIcon`      | `React.ReactNode` (optional)                | Custom element used as the forward navigation control (e.g., to move to the next month).                        |
+| `backwardIcon`     | `React.ReactNode` (optional)                | Custom element used as the backward navigation control (e.g., to move to the previous month).                   |
+| `timeModule`       | `React.ReactNode` (optional)                | An optional UI section for selecting or displaying time alongside the date.                                   |
+| `calendarIcon`     | `React.ReactNode \| null` (optional)         | Icon used to trigger the calendar dropdown. Use `null` to disable it.                                          |
+| `className`        | `string` (optional)                         | Additional CSS classes for the outer container of the DatePicker.                                             |
+| `inputClassName`   | `string` (optional)                         | Additional CSS classes for styling the input element itself.                                                 |
+| `calendarClassName`| `string` (optional)                         | Additional CSS classes for styling the calendar popup component.                                              |
+| `open`             | `boolean` (optional)                        | Controls whether the calendar popup is explicitly open (`true`) or closed (`false`).                           |
+| `weekStart`        | `"monday" | "sunday"` (optional)             | Sets the starting day of the week in the calendar view.                                                        | 
+
+

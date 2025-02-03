@@ -1,0 +1,58 @@
+---
+sidebar_position: 1
+---
+
+
+
+# Intro
+
+import DatePicker from "../../src/components/DatePicker"
+
+
+
+# react-daisyui-timetools
+
+A modern package delivering flexible and sleek date/time pickers built specifically for [daisyUI](https://daisyui.com). Leveraging Day.js, these components offer a smooth and integrated experience for handling dates and times in your React projects.
+
+## Components
+
+- **`<Datepicker />`** – A stylish, easy-to-use date picker.
+- **`<TimePicker />`** – A precise time selection tool.
+- **`<DateAndTimePicker />`** – Combines both date and time picking in one seamless component.
+
+## Key Benefits
+
+- **DaisyUI Themes Compatibility:** Provides perfect integration with all daisyUI themes.
+- **Day.js Integration:** Uses Day.js for powerful date manipulation.
+- **Locale Support:** Access over 100 locales (with 16 enabled by default) for internationalization.
+- **AM/PM Support:** Simplifies time selection with effective AM/PM toggling.
+- **Min Dates:** Ideal for start/end date pickers with support for minimum selectable dates.
+- **Focused Functionality:** No range pickers—delivering simplicity and clarity in user interaction.
+
+Elevate your time and date management with `react-daisyui-timetools` and enjoy a clean, customizable, and robust solution.
+
+
+### Light (default)
+<div data-theme="light" className="rounded-2xl w-48" style={{ width: "390px" }} >
+  <DatePicker value="2025-01-01 12:00" onChange={() => {}} />
+</div>
+### Dark (french) custom Icon
+<div data-theme="dark" className="rounded-2xl w-48" style={{ width: "390px" }}>
+  <DatePicker value="2025-01-01 12:00" locale="fr" onChange={() => {}} calendarIcon={<div>📅</div>} />
+</div>
+### Cupcake (italian)
+<div data-theme="cupcake" className="rounded-2xl w-48" style={{ width: "390px" }}>
+  <DatePicker value="2025-01-01 12:00" locale="it" onChange={() => {}} />
+</div>
+### Halloween (spanish)
+<div data-theme="halloween" className="rounded-2xl w-48" style={{ width: "390px" }}>
+  <DatePicker value="2025-01-01 12:00" locale="es" onChange={() => {}} calendarIcon={<div>🎃</div>} />
+</div>
+### Synthwave (swedish)
+<div data-theme="synthwave" className="rounded-2xl w-48" style={{ width: "390px" }}>
+  <DatePicker value="2025-01-01 12:00" locale="sv" onChange={() => {}} />
+</div>
+### Cyberpunk (polish)
+<div data-theme="cyberpunk" className="rounded-2xl w-48" style={{ width: "390px" }}>
+  <DatePicker value="2025-01-01 12:00" locale="pl" onChange={() => {}} />
+</div>

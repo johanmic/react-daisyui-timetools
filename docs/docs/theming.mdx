@@ -1,0 +1,30 @@
+---
+sidebar_position: 6
+---
+
+
+# Theming
+
+
+The `DatePicker` and `TimePicker` components are designed to be themeable. You can pass in your own custom theme to the components using the `theme` prop.
+it inherits the theme of the parent container.
+
+```tsx
+<DatePicker theme="light" />
+
+or
+
+<div data-theme="cupcake">
+  <DatePicker />
+</div>
+```
+
+
+
+## React DaisyUI TimeTools without DaisyUI
+
+Can i use RDT without daisyUI?
+not really. it uses the Tailwind Theme and color classes 
+as well as daisyUI components like button, input, etc.
+
+if you handle all these classes yourself im sure it will work, but thats more work than just using daisyUI.
