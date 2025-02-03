@@ -4,6 +4,7 @@ import DatePicker from "../../src/components/DatePicker"
 import ThemePicker from "./components/thempicker"
 import DateAndTimePicker from "../../src/components/DateAndTimePicker"
 import { getDayjs } from "../../src/utils/date"
+import Logo from "../../docs/static/img/logo-text.png"
 const dayjs = getDayjs()
 const defaultDate = dayjs().add(1, "day").format("YYYY-MM-DD")
 function App() {
@@ -13,13 +14,13 @@ function App() {
     dayjs().add(2, "day").format("YYYY-MM-DD")
   )
   return (
-    <div className="container mx-auto p-4 max-w-lg">
-      <header className="flex justify-between items-center mb-8 max-w-lg">
-        <h1 className="text-2xl font-bold">React Daisyui TimeTools</h1>
+    <div className="container mx-auto flex flex-col justify-center items-center p-4 max-w-2xl">
+      <header className="flex justify-between items-center mb-8 w-full p-4">
+        <img src={Logo} alt="React Daisyui TimeTools" className="h-16" />
         <ThemePicker />
       </header>
 
-      <section className="space-y-8 max-w-sm">
+      <section className="space-y-8 w-full max-w-md flex flex-col self-center">
         <h2 className="text-2xl font-bold">Basics</h2>
 
         <div className="space-y-4">

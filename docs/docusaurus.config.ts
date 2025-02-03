@@ -11,18 +11,17 @@ const config: Config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://your-docusaurus-site.example.com",
+  url: "https://johanmic.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/",
+  baseUrl: "/react-daisyui-timetools/",
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: "johanmic", // Usually your GitHub org/user name.
-  projectName: "react-daisyui-timetools", // Usually your repo name.
-
+  organizationName: "johanmic",
+  projectName: "react-daisyui-timetools",
+  trailingSlash: false,
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
+  deploymentBranch: "gh-pages",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -71,6 +70,10 @@ const config: Config = {
     image: "img/docusaurus-social-card.jpg",
     navbar: {
       title: "react-daisyui-timetools",
+      logo: {
+        alt: "react-daisyui-timetools Logo",
+        src: "img/logo.png",
+      },
       items: [
         {
           type: "docSidebar",

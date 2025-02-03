@@ -28,3 +28,30 @@ not really. it uses the Tailwind Theme and color classes
 as well as daisyUI components like button, input, etc.
 
 if you handle all these classes yourself im sure it will work, but thats more work than just using daisyUI.
+
+
+## Hiding Scrollbars
+
+We dont hide the scrollbars by default, but you can do it with some custom css.
+place is in a index.css file thats read. see example app for reference.
+
+```css
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+```
+
+
+
+
+
+

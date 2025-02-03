@@ -1,6 +1,13 @@
-# react-daisyui-timetools
+<!-- Logo Text -->
+<img src="docs/static/img/logo-text-dark.png" alt="Logo Text" width="500" align="left" class="block" style="margin-bottom: 20px;" />
+
+<br clear="all" />
+
+<!-- Demo Image -->
 
 A modern package delivering flexible and sleek date/time pickers built specifically for [daisyUI](https://daisyui.com). Leveraging Day.js, these components offer a smooth and integrated experience for handling dates and times in your React projects.
+
+<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTF6ZDh0ZHpwMW16OXltMmt3ZjZpOWU3aTVxZ2N3dXh0aHN0b3NjbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WW0Dxp75rE756zaxCL/giphy.gif" width="640" class="block" />
 
 ## Components
 

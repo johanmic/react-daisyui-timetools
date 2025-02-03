@@ -183,35 +183,78 @@ export function TimePicker({
     }
   }, [open, hour, minute, AMPM, paddedMinuteOptions, minuteRefs])
 
-  const isTimeValid = (h: string, m: string) => {
-    const currentTime = dayjs()
-    const selectedTime = dayjs()
+  const isTimeValid = (h: string, m: string): boolean => {
+    // Use the provided value as the base date for time comparison
+    const baseDate = value ? dayjs(value) : dayjs()
+    const selectedTime = baseDate
       .set("hour", parseInt(h))
       .set("minute", parseInt(m))
+      .set("second", 0)
+      .set("millisecond", 0)
 
-    const minTime = minDate ? dayjs(minDate) : null
-    const maxTime = maxDate ? dayjs(maxDate) : null
-
-    // If the provided value is on a future day, ignore minDate restrictions
-    if (
-      value &&
-      dayjs(value).startOf("day").isAfter(currentTime.startOf("day"))
-    )
-      return true
-
-    // If minDate is provided and is a future day, all times are valid
-    if (minTime && minTime.startOf("day").isAfter(currentTime.startOf("day")))
-      return true
-
-    // If minDate is today, ensure selected time is not before it
-    if (minTime && minTime.startOf("day").isSame(currentTime.startOf("day"))) {
-      if (selectedTime.isBefore(minTime)) return false
+    if (minDate) {
+      const min = dayjs(minDate)
+      // Only enforce minTime if the base date is the same day as minDate
+      if (
+        baseDate.startOf("day").isSame(min.startOf("day")) &&
+        selectedTime.isBefore(min)
+      ) {
+        return false
+      }
     }
 
-    // Ensure the selected time does not exceed maxDate, if provided
-    if (maxTime && selectedTime.isAfter(maxTime)) return false
+    if (maxDate) {
+      const max = dayjs(maxDate)
+      // Only enforce maxTime if the base date is the same day as maxDate
+      if (
+        baseDate.startOf("day").isSame(max.startOf("day")) &&
+        selectedTime.isAfter(max)
+      ) {
+        return false
+      }
+    }
 
     return true
+  }
+
+  const isHourDisabled = (h: string, period: "AM" | "PM"): boolean => {
+    if (!h) return false // Skip empty padding items
+
+    let parsedHour = parseInt(h)
+    if (AMPM) {
+      if (period === "PM" && parsedHour !== 12) parsedHour += 12
+      else if (period === "AM" && parsedHour === 12) parsedHour = 0
+    }
+
+    // Use the selected date from value (or today) as the base for comparing times
+    const baseDate = value ? dayjs(value) : dayjs()
+    const selectedTime = baseDate
+      .set("hour", parsedHour)
+      .set("minute", 0)
+      .set("second", 0)
+      .set("millisecond", 0)
+
+    if (minDate) {
+      const min = dayjs(minDate)
+      if (
+        baseDate.startOf("day").isSame(min.startOf("day")) &&
+        selectedTime.isBefore(min)
+      ) {
+        return true
+      }
+    }
+
+    if (maxDate) {
+      const max = dayjs(maxDate)
+      if (
+        baseDate.startOf("day").isSame(max.startOf("day")) &&
+        selectedTime.isAfter(max)
+      ) {
+        return true
+      }
+    }
+
+    return false
   }
 
   const handleTimeSelection = useCallback(
@@ -319,13 +362,14 @@ export function TimePicker({
                   "flex items-center justify-center text-lg text-center py-3",
                   !h && "invisible",
                   h === hour && "bg-primary text-primary-content",
-                  h && isTimeValid(h, "00")
+                  h && !isHourDisabled(h, period)
                     ? "cursor-pointer hover:bg-primary/50 hover:text-primary-content"
                     : "opacity-30 cursor-not-allowed"
                 )}
                 key={`${h}-${index}`}
                 onClick={() =>
                   h &&
+                  !isHourDisabled(h, period) &&
                   isTimeValid(h, minute) &&
                   handleTimeSelection(h, minute, true)
                 }

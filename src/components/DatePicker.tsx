@@ -245,7 +245,9 @@ export const DatePicker: FC<DatePickerProps> = ({
                 })}
               </div>
             </div>
-            {timeModule && <div className="border-l pl-4">{timeModule}</div>}
+            {timeModule && (
+              <div className="border-l border-base-300 pl-4">{timeModule}</div>
+            )}
           </div>
         </div>
       )}
