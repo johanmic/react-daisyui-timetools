@@ -1,6 +1,6 @@
 {
   "name": "@johanmic/react-daisyui-timetools",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A collection of React time and date pickers using DaisyUI and Tailwind CSS",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
