@@ -1,5 +1,5 @@
 import { useState } from "react"
-import DateAndTimePicker from "../../src/components/DateAndTimePicker"
+import DateAndTimePicker from "../../../src/components/DateAndTimePicker"
 const d = new Date()
 const dPlusTwoDays = new Date(d.setDate(d.getDate() + 2))
 export default function DateAndTimePickerExample() {

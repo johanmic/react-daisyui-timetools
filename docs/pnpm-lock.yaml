@@ -17,6 +17,9 @@ importers:
       '@docusaurus/theme-classic':
         specifier: ^3.7.0
         version: 3.7.0(@types/react@18.3.12)(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
+      '@docusaurus/theme-common':
+        specifier: ^3.7.0
+        version: 3.7.0(@docusaurus/plugin-content-docs@3.7.0(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(acorn@8.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mdx-js/react':
         specifier: ^3.0.0
         version: 3.1.0(@types/react@18.3.12)(react@18.3.1)

@@ -293,7 +293,7 @@ export function TimePicker({
 
   return (
     <div
-      className={cn("relative", hideInput ? "w-32" : "", className)}
+      className={cn("relative", hideInput ? "w-32" : "max-w-48", className)}
       ref={ref}
     >
       {!hideInput && (

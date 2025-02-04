@@ -91,7 +91,26 @@ const config: Config = {
     },
     footer: {
       style: "dark",
-      copyright: `Built with Docusaurus.`,
+      links: [
+        {
+          title: "Custom Links",
+          items: [
+            {
+              label: "GitHub",
+              href: "https://github.com/johanmic/react-daisyui-timetools",
+            },
+            {
+              label: "NPM",
+              href: "https://www.npmjs.com/package/react-daisyui-timetools",
+            },
+            {
+              label: "Bluesky",
+              href: "https://bsky.app/profile/jojomic.bsky.social",
+            },
+          ],
+        },
+      ],
+      copyright: `&copy; ${new Date().getFullYear()} Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

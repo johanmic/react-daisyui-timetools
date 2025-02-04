@@ -1,8 +1,9 @@
 import { useState } from "react"
 import "./App.css"
-import DatePicker from "../../src/components/DatePicker"
+
 import ThemePicker from "./components/thempicker"
-import DateAndTimePicker from "../../src/components/DateAndTimePicker"
+
+import { DatePicker, TimePicker, DateAndTimePicker } from "../../src"
 import { getDayjs } from "../../src/utils/date"
 import Logo from "../../docs/static/img/logo-text.png"
 const dayjs = getDayjs()
@@ -120,6 +121,12 @@ function App() {
                 placeholder="Select a date"
                 size="sm"
               />
+            </div>
+            <div>
+              <label className="label">Time</label>
+              <TimePicker value={date} onChange={setDate} />
+              <label className="label">Time with AM/PM</label>
+              <TimePicker value={date} onChange={setDate} AMPM={true} />
             </div>
           </div>
         </div>
