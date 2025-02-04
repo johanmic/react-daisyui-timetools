@@ -1,5 +1,5 @@
 <!-- Logo Text -->
-<img src="docs/static/img/logo-text-dark.png" alt="Logo Text" width="500" align="left" class="block" style="margin-bottom: 20px;" />
+<img src="https://johanmic.github.io/react-daisyui-timetools/img/logo-text.png" alt="Logo Text" width="500" align="left" class="block" style="margin-bottom: 20px;" />
 
 <br clear="all" />
 
