@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: light --default, dark, cupcake, aqua, valentine, retro, cyberpunk, pastel, fantasy, wireframe, black, luxury, dracula;
+}
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {

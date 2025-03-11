@@ -54,7 +54,6 @@ export const getDayjs = (locale?: string | void) => {
   if (langLocale) {
     langLocale().then(({ default: locale }) => {
       dayjs.locale(locale)
-      console.log("locale", dayjs.locale())
     })
   }
   return dayjs

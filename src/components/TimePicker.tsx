@@ -3,10 +3,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat" // Required to ha
 import utc from "dayjs/plugin/utc"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "../utils/cn"
+import "./tw.css"
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
 export interface TimePickerProps {
+  id?: string
   value?: string | null | Date
   open?: boolean
   onChange: (value: string) => void
@@ -14,6 +16,7 @@ export interface TimePickerProps {
   maxDate?: Date | string | null
   minDate?: Date | string | null
   closeOnHour?: boolean
+  disabled?: boolean
   closeOnMinute?: boolean
   placeholder?: string
   hideInput?: boolean
@@ -68,12 +71,14 @@ const getMinuteIntervals = (intervals: string[]) => {
 }
 
 export function TimePicker({
+  id,
   open: openProp = false,
   value,
   onChange,
   AMPM = false,
   maxDate,
   minDate,
+  disabled = false,
   className,
   inputClassName,
   calendarClassName,
@@ -295,11 +300,13 @@ export function TimePicker({
     <div
       className={cn("relative", hideInput ? "w-32" : "max-w-48", className)}
       ref={ref}
+      id={id}
+      data-testid="time-picker"
     >
       {!hideInput && (
-        <div className="flex items-center">
+        <div className={`flex items-center ${disabled ? "opacity-60" : ""}`}>
           <div
-            onClick={() => setOpen(!open)}
+            onClick={() => !disabled && setOpen(!open)}
             className={cn(
               "inline-flex input input-bordered relative justify-center w-32 items-center rounded-box cursor-pointer",
               inputClassName

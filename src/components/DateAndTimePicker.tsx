@@ -4,24 +4,37 @@ import { getDayjs } from "../utils/date"
 import React, { useEffect, useState } from "react"
 import { DatePickerProps } from "./DatePicker"
 import { TimePickerProps } from "./TimePicker"
-
+import "./tw.css"
 export interface DateAndTimePickerProps {
+  id?: string
+  timeId?: string
+  dateId?: string
   value: string | null | undefined | Date
   locale: string
   minDate?: string | Date
   maxDate?: string | Date
   onChange: (date: string) => void
   placeholder?: string
+  disabled?: boolean
   className?: string
   combined?: boolean
   AMPM?: boolean
-  dateProps?: DatePickerProps
-  timeProps?: TimePickerProps
+  dateProps?: Omit<
+    DatePickerProps,
+    "onChange" | "locale" | "disabled" | "placeholder"
+  >
+  timeProps?: Omit<
+    TimePickerProps,
+    "onChange" | "locale" | "disabled" | "placeholder"
+  >
 }
 
 const roundToNearest15Minutes = (minute: number) => Math.round(minute / 15) * 15
 
 export const DateAndTimePicker = ({
+  id,
+  timeId,
+  dateId,
   value,
   onChange,
   minDate,
@@ -31,6 +44,7 @@ export const DateAndTimePicker = ({
   combined = false,
   className,
   placeholder,
+  disabled = false,
   timeProps,
   dateProps,
 }: DateAndTimePickerProps) => {
@@ -38,10 +52,11 @@ export const DateAndTimePicker = ({
   const [dateTime, setDateTime] = useState(() => {
     if (value) {
       const parsedDate = dayjs(value)
-      if (parsedDate.hour() === 0 && parsedDate.minute() === 0) {
+      const roundedMinute = roundToNearest15Minutes(parsedDate.minute())
+      if (parsedDate.hour() === 0 && roundedMinute === 0) {
         return parsedDate.set("hour", 12).set("minute", 0)
       }
-      return parsedDate
+      return parsedDate.set("minute", roundedMinute)
     }
     return null
   })
@@ -50,10 +65,11 @@ export const DateAndTimePicker = ({
     setDateTime(() => {
       if (value) {
         const parsedDate = dayjs(value)
-        if (parsedDate.hour() === 0 && parsedDate.minute() === 0) {
-          return parsedDate.set("hour", 12)
+        const roundedMinute = roundToNearest15Minutes(parsedDate.minute())
+        if (parsedDate.hour() === 0 && roundedMinute === 0) {
+          return parsedDate.set("hour", 12).set("minute", 0)
         }
-        return parsedDate
+        return parsedDate.set("minute", roundedMinute)
       }
       return null
     })
@@ -102,53 +118,85 @@ export const DateAndTimePicker = ({
 
   if (combined) {
     return (
-      <DatePicker
-        minDate={minDate || dayjs().toISOString()}
-        maxDate={maxDate}
-        value={dateTime ? dateTime.format("YYYY-MM-DD HH:mm") : ""}
-        onChange={handleDateChange}
-        locale={locale}
-        placeholder={placeholder}
-        timeModule={
-          <TimePicker
-            AMPM={AMPM}
-            value={dateTime ? dateTime.toISOString() : null}
-            onChange={handleTimeChange}
-            maxDate={maxDate}
-            minDate={minDate}
-            placeholder={placeholder}
-            open={true}
-            hideInput={true}
-            className="max-w-16"
-            {...timeProps}
-          />
-        }
-        {...dateProps}
-      />
+      <>
+        <DatePicker
+          id={dateId}
+          minDate={minDate || dayjs().toISOString()}
+          maxDate={maxDate}
+          value={dateTime ? dateTime.format("YYYY-MM-DD HH:mm") : ""}
+          onChange={handleDateChange}
+          locale={locale}
+          disabled={disabled}
+          placeholder={placeholder}
+          timeModule={
+            <TimePicker
+              id={timeId}
+              AMPM={AMPM}
+              disabled={disabled}
+              value={dateTime ? dateTime.format("YYYY-MM-DDTHH:mm") : null}
+              onChange={handleTimeChange}
+              maxDate={maxDate}
+              minDate={minDate}
+              placeholder={placeholder}
+              open={true}
+              hideInput={true}
+              className="max-w-16"
+              {...timeProps}
+            />
+          }
+          {...dateProps}
+        />
+        <input
+          type="hidden"
+          data-testid="datetime-picker"
+          value={dateTime ? dateTime.format("YYYY-MM-DDTHH:mm") : ""}
+        />
+      </>
     )
   }
 
   return (
-    <div className={`flex gap-2 ${className}`}>
-      <DatePicker
-        minDate={minDate || dayjs().toISOString()}
-        maxDate={maxDate}
-        value={dateTime ? dateTime.format("YYYY-MM-DD") : ""}
-        onChange={handleDateChange}
-        locale={locale}
-        placeholder={placeholder}
-        {...dateProps}
-      />
-      <TimePicker
-        value={dateTime ? dateTime.toISOString() : null}
-        onChange={handleTimeChange}
-        maxDate={maxDate}
-        minDate={minDate}
-        placeholder={placeholder}
-        {...timeProps}
-      />
+    <div className={`flex  min-h-12 w-full gap-2 ${className || ""}`} id={id}>
+      <div className="w-full">
+        <DatePicker
+          id={dateId}
+          minDate={minDate || dayjs().toISOString()}
+          maxDate={maxDate}
+          value={dateTime ? dateTime.format("YYYY-MM-DD") : ""}
+          onChange={handleDateChange}
+          locale={locale}
+          disabled={disabled}
+          placeholder={placeholder}
+          className="col-span-3"
+          {...dateProps}
+        />
+      </div>
+      <div className="col-span-2">
+        <TimePicker
+          id={timeId}
+          value={dateTime ? dateTime.format("YYYY-MM-DDTHH:mm") : null}
+          onChange={handleTimeChange}
+          maxDate={maxDate}
+          minDate={minDate}
+          disabled={disabled}
+          placeholder={placeholder}
+          className="w-full"
+          {...timeProps}
+        />
+        <input
+          type="hidden"
+          data-testid="datetime-picker"
+          value={dateTime ? dateTime.format("YYYY-MM-DDTHH:mm") : ""}
+        />
+      </div>
     </div>
   )
 }
 
 export default DateAndTimePicker
+
+/*
+
+
+    
+*/

@@ -3,9 +3,11 @@ import "./App.css"
 
 import ThemePicker from "./components/thempicker"
 
-import { DatePicker, TimePicker, DateAndTimePicker } from "../../src"
+import { DatePicker, TimePicker, DateAndTimePicker } from "../../"
+
 import { getDayjs } from "../../src/utils/date"
 import Logo from "../../docs/static/img/logo-text.png"
+
 const dayjs = getDayjs()
 const defaultDate = dayjs().add(1, "day").format("YYYY-MM-DD")
 function App() {
@@ -26,8 +28,11 @@ function App() {
 
         <div className="space-y-4">
           <div className="form-control">
-            <label className="label">Date</label>
+            <label className="label">Date with year picker</label>
             <DatePicker
+              pickYear
+              minDate={dayjs().subtract(10, "year").format("YYYY-MM-DD")}
+              maxDate={dayjs().add(10, "year").format("YYYY-MM-DD")}
               value={date}
               onChange={setDate}
               locale="en"
@@ -57,12 +62,17 @@ function App() {
           </div>
 
           <div className="form-control">
-            <label className="label">Date And Time Combined</label>
+            <label className="label">
+              Date And Time Combined, custom calendar icon
+            </label>
             <DateAndTimePicker
               value={date}
               onChange={setDate}
               locale="en"
               placeholder="Select a date"
+              dateProps={{
+                calendarIcon: <div>x</div>,
+              }}
               combined
             />
           </div>
@@ -127,6 +137,17 @@ function App() {
               <TimePicker value={date} onChange={setDate} />
               <label className="label">Time with AM/PM</label>
               <TimePicker value={date} onChange={setDate} AMPM={true} />
+            </div>
+            <div>
+              <label className="label">Disabled</label>
+              <TimePicker value={date} onChange={setDate} disabled />
+              <label className="label">Disabled with AM/PM</label>
+              <TimePicker
+                value={date}
+                onChange={setDate}
+                AMPM={true}
+                disabled
+              />
             </div>
           </div>
         </div>
