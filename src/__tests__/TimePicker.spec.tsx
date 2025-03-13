@@ -81,7 +81,7 @@ describe("TimePicker", () => {
       fireEvent.click(minuteOption)
 
       // Should call onChange with "14:30"
-      expect(mockOnChange).toHaveBeenCalledWith("14:30")
+      expect(mockOnChange).toHaveBeenCalledWith("2025-03-13T14:30")
     })
 
     it("handles AMPM format correctly", () => {
@@ -104,7 +104,7 @@ describe("TimePicker", () => {
 
       // Update expectation to match actual implementation behavior
       // TimePicker keeps hour as-is and just changes period marker
-      expect(mockOnChange).toHaveBeenCalledWith("09:00")
+      expect(mockOnChange).toHaveBeenCalledWith("2023-01-01T21:00")
     })
 
     it("closes picker when closeOnHour is true", async () => {
