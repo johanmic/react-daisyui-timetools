@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-import TimePicker from "../../src/components/TimePicker"
+import {TimePicker} from "../../"
 
 # TimePicker
 
@@ -63,8 +63,8 @@ import TimePicker from "react-daisyui-timetools"
 | Prop               | Type                                        | Description                                                                                                   |
 | ------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `value`            | `string \| null \| Date`                    | The current selected date/time value. Can be a string, null, or Date object.                                  |
-| `open`             | `boolean` (optional)                        | Controls whether the calendar popup is explicitly open (`true`) or closed (`false`).                           |
-| `onChange`         | `(value: string) => void`                   | Callback invoked when the date/time value changes, passing the updated value as a string.                     |
+| `open`             | `boolean` (optional)                        | Controls whether the calendar popup is explicitly open (`true`) or closed (`false`).                          |
+| `onChange`         | `(value: string) => void`                   | Callback invoked when the date/time value changes, passing a full date as a string (not just time).           |
 | `AMPM`             | `boolean` (optional)                        | Enables AM/PM time format.                                                                                    |
 | `maxDate`          | `Date \| string \| null` (optional)         | The maximum selectable date. Limits selection to dates on or before this value.                               |
 | `minDate`          | `Date \| string \| null` (optional)         | The minimum selectable date. Limits selection to dates on or after this value.                                |

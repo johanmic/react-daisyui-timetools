@@ -3,10 +3,12 @@ import customParseFormat from "dayjs/plugin/customParseFormat" // Required to ha
 import utc from "dayjs/plugin/utc"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "../utils/cn"
+import "./tw.css"
 dayjs.extend(customParseFormat)
 dayjs.extend(utc)
 
 export interface TimePickerProps {
+  id?: string
   value?: string | null | Date
   open?: boolean
   onChange: (value: string) => void
@@ -14,6 +16,7 @@ export interface TimePickerProps {
   maxDate?: Date | string | null
   minDate?: Date | string | null
   closeOnHour?: boolean
+  disabled?: boolean
   closeOnMinute?: boolean
   placeholder?: string
   hideInput?: boolean
@@ -68,12 +71,14 @@ const getMinuteIntervals = (intervals: string[]) => {
 }
 
 export function TimePicker({
+  id,
   open: openProp = false,
   value,
   onChange,
   AMPM = false,
   maxDate,
   minDate,
+  disabled = false,
   className,
   inputClassName,
   calendarClassName,
@@ -258,23 +263,39 @@ export function TimePicker({
   }
 
   const handleTimeSelection = useCallback(
-    (newHour: string, newMinute: string, isHourClick: boolean) => {
-      if (isTimeValid(newHour, newMinute)) {
+    (
+      newHour: string,
+      newMinute: string,
+      isHourClick: boolean,
+      newPeriod?: "AM" | "PM"
+    ) => {
+      // Use the provided period or fall back to the current state
+      const activePeriod = newPeriod || period
+
+      // Convert selected time to 24-hour format if in AM/PM mode.
+      let finalHour = newHour
+      if (AMPM) {
+        const hourNum = parseInt(newHour)
+        if (activePeriod === "PM" && hourNum !== 12) {
+          finalHour = (hourNum + 12).toString().padStart(2, "0")
+        } else if (activePeriod === "AM" && hourNum === 12) {
+          finalHour = "00"
+        }
+      }
+
+      if (isTimeValid(finalHour, newMinute)) {
         setHour(newHour)
         setMinute(newMinute)
+        if (newPeriod) setPeriod(newPeriod)
 
-        // Convert selected time to 24-hour format if in AM/PM mode.
-        let finalHour = newHour
-        if (AMPM) {
-          const hourNum = parseInt(newHour)
-          if (period === "PM" && hourNum !== 12) {
-            finalHour = (hourNum + 12).toString().padStart(2, "0")
-          } else if (period === "AM" && hourNum === 12) {
-            finalHour = "00"
-          }
-        }
+        // Create a new date based on the current value or current date
+        const baseDate = value ? dayjs(value) : dayjs()
+        const newDate = baseDate
+          .set("hour", parseInt(finalHour))
+          .set("minute", parseInt(newMinute))
+          .format("YYYY-MM-DDTHH:mm")
 
-        onChange(`${finalHour}:${newMinute}`)
+        onChange(newDate)
 
         if (isHourClick && closeOnHour) {
           setOpen(false)
@@ -283,23 +304,36 @@ export function TimePicker({
         }
       }
     },
-    [AMPM, onChange, closeOnHour, closeOnMinute, period]
+    [AMPM, onChange, closeOnHour, closeOnMinute, period, value]
   )
 
-  const togglePeriod = useCallback(() => {
-    setPeriod((prev) => (prev === "AM" ? "PM" : "AM"))
-    handleTimeSelection(hour, minute, true)
-  }, [hour, minute, handleTimeSelection])
+  // const togglePeriod = useCallback(() => {
+  //   const newPeriod = period === "AM" ? "PM" : "AM"
+  //   setPeriod(newPeriod)
+
+  //   // Convert hour to 24-hour format based on the new period
+  //   let finalHour = hour
+  //   const hourNum = parseInt(hour)
+  //   if (newPeriod === "PM" && hourNum !== 12) {
+  //     finalHour = (hourNum + 12).toString().padStart(2, "0")
+  //   } else if (newPeriod === "AM" && hourNum === 12) {
+  //     finalHour = "00"
+  //   }
+  //   console.log({ finalHour, minute })
+  //   onChange(`${finalHour}:${minute}`)
+  // }, [hour, minute, period, onChange])
 
   return (
     <div
       className={cn("relative", hideInput ? "w-32" : "max-w-48", className)}
       ref={ref}
+      id={id}
+      data-testid="time-picker"
     >
       {!hideInput && (
-        <div className="flex items-center">
+        <div className={`flex items-center ${disabled ? "opacity-60" : ""}`}>
           <div
-            onClick={() => setOpen(!open)}
+            onClick={() => !disabled && setOpen(!open)}
             className={cn(
               "inline-flex input input-bordered relative justify-center w-32 items-center rounded-box cursor-pointer",
               inputClassName
@@ -315,19 +349,17 @@ export function TimePicker({
             </div>
           </div>
           {externalAMPM && AMPM && (
-            <div className="flex border rounded-box input-bordered flex-col min-h-12 ml-2">
+            <div className="flex border rounded-box join join-vertical input-ghost flex-col min-h-12 ml-2">
               {["AM", "PM"].map((p) => (
                 <button
                   key={p}
                   className={cn(
                     "badge join-item",
-                    p === period
-                      ? "badge-outline badge-primary"
-                      : "badge-outline"
+                    p === period ? "badge-primary" : "badge-ghost"
                   )}
                   onClick={() => {
-                    setPeriod(p as "AM" | "PM")
-                    handleTimeSelection(hour, minute, true)
+                    const newPeriod = p as "AM" | "PM"
+                    handleTimeSelection(hour, minute, true, newPeriod)
                   }}
                 >
                   {p}
@@ -419,8 +451,8 @@ export function TimePicker({
                     "hover:bg-primary/50 hover:text-primary-content"
                   )}
                   onClick={() => {
-                    setPeriod(p as "AM" | "PM")
-                    handleTimeSelection(hour, minute, true)
+                    const newPeriod = p as "AM" | "PM"
+                    handleTimeSelection(hour, minute, true, newPeriod)
                   }}
                 >
                   <span className="text-lg">{p}</span>

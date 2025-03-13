@@ -30,9 +30,8 @@
 }
 
 /* Then Tailwind, with safelist for Docusaurus elements */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui";
 
 /* Preserve Docusaurus styles */
 @layer base {

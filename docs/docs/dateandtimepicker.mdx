@@ -3,7 +3,7 @@ sidebar_position: 4
 ---
 # Date And TimePicker
 
-import DateAndTimePicker from "../../src/components/DateAndTimePicker"
+import {DateAndTimePicker} from "../../"
 import { useState } from "react";
 import MultipleDateAndTimePickerExample from "../src/components/multipickerexample"
 
@@ -52,3 +52,12 @@ Key features are
 | `AMPM`             | `boolean` (optional)                        | Determines if the time picker should use AM/PM format.                                                        |
 | `dateProps`        | `DatePickerProps` (optional)                | Additional props for the date picker component. [See DatePickerProps](/datepicker)                                  |
 | `timeProps`        | `TimePickerProps` (optional)                | Additional props for the time picker component. [See TimePickerProps](/timepicker)                                  |
+
+
+## A note on date and time props
+
+The `DateAndTimePicker` component is a wrapper around the `DatePicker` and `TimePicker` components.
+
+The `dateProps` and `timeProps` are used to pass additional props to the `DatePicker` and `TimePicker` components.
+values, `"onChange" | "locale" | "disabled" | "placeholder" | "value | "AMPM"` are handled by the wrapper and not accessible 
+

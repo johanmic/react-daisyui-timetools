@@ -6,7 +6,7 @@ interface IconProps {
   className?: string
 }
 
-export const Forward: FC<IconProps> = ({ className }) => (
+export const Backward: FC<IconProps> = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="32"
@@ -19,7 +19,7 @@ export const Forward: FC<IconProps> = ({ className }) => (
   </svg>
 )
 
-export const Backward: FC<IconProps> = ({ className }) => (
+export const Forward: FC<IconProps> = ({ className }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="32"
