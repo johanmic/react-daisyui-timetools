@@ -1,9 +1,10 @@
-import React, { FC, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { cn } from "../utils/cn"
 import type { DayJs } from "../utils/date"
 import { getDayjs } from "../utils/date"
 import { Backward, Calendar, Forward } from "./Icons"
 import "./tw.css"
+
 export interface DatePickerProps {
   id?: string
   maxDate?: string | Date
@@ -15,6 +16,7 @@ export interface DatePickerProps {
   placeholder?: string
   size?: "xs" | "sm" | "md" | "lg"
   pickYear?: boolean
+  pickMonth?: boolean
   forwardIcon?: React.ReactNode
   backwardIcon?: React.ReactNode
   timeModule?: React.ReactNode
@@ -26,7 +28,7 @@ export interface DatePickerProps {
   weekStart?: "monday" | "sunday"
 }
 
-export const DatePicker: FC<DatePickerProps> = ({
+export const DatePicker = ({
   open: openProp = false,
   id,
   value,
@@ -36,6 +38,7 @@ export const DatePicker: FC<DatePickerProps> = ({
   minDate,
   disabled = false,
   pickYear = false,
+  pickMonth = false,
   maxDate,
   forwardIcon = <Forward className="w-4 h-4" />,
   backwardIcon = <Backward className="w-4 h-4" />,
@@ -46,9 +49,10 @@ export const DatePicker: FC<DatePickerProps> = ({
   calendarClassName = "",
   timeModule,
   weekStart = "monday",
-}) => {
+}: DatePickerProps) => {
   const [show, setShow] = useState(openProp)
   const [showYearPicker, setShowYearPicker] = useState(false)
+  const [showMonthPicker, setShowMonthPicker] = useState(false)
   const [currentDate, setCurrentDate] = useState<DayJs | null>(null)
   const dayjs = getDayjs(locale)
 
@@ -81,6 +85,7 @@ export const DatePicker: FC<DatePickerProps> = ({
       ) {
         setShow(false)
         setShowYearPicker(false)
+        setShowMonthPicker(false)
       }
     }
 
@@ -95,6 +100,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     setShow(newShow)
     if (!newShow) {
       setShowYearPicker(false)
+      setShowMonthPicker(false)
     }
   }
 
@@ -103,6 +109,7 @@ export const DatePicker: FC<DatePickerProps> = ({
     onChange(day.format("YYYY-MM-DD"))
     setShow(false)
     setShowYearPicker(false)
+    setShowMonthPicker(false)
   }
 
   const handleMonthChange = (
@@ -114,13 +121,34 @@ export const DatePicker: FC<DatePickerProps> = ({
       ? currentDate.add(direction, "month")
       : dayjs().locale(locale).add(direction, "month")
     setCurrentDate(newDate)
+    setShowMonthPicker(false)
   }
 
   const handleYearClick = () => {
     setShowYearPicker(!showYearPicker)
+    if (showMonthPicker) setShowMonthPicker(false)
     if (!showYearPicker) {
       setShow(true)
     }
+  }
+
+  const handleMonthClick = () => {
+    setShowMonthPicker(!showMonthPicker)
+    if (showYearPicker) setShowYearPicker(false)
+    if (!showMonthPicker) {
+      setShow(true)
+    }
+  }
+
+  const handleMonthSelect = (month: number) => {
+    const newDate = currentDate
+      ? currentDate.month(month)
+      : dayjs().month(month)
+    setCurrentDate(newDate)
+    setShowMonthPicker(false)
+
+    // Trigger onChange with the new month but keep the same date
+    onChange(newDate.format("YYYY-MM-DD"))
   }
 
   const handleYearSelect = (year: number) => {
@@ -137,6 +165,21 @@ export const DatePicker: FC<DatePickerProps> = ({
     const max = maxDate ? dayjs(maxDate).endOf("day") : null
 
     return (!min || day.isSameOrAfter(min)) && (!max || day.isSameOrBefore(max))
+  }
+
+  const isMonthSelectable = (year: number, month: number) => {
+    // If no current date, use current year
+    const testYear = year || dayjs().year()
+
+    // Create dates for first and last day of the month
+    const firstDay = dayjs().year(testYear).month(month).startOf("month")
+    const lastDay = dayjs().year(testYear).month(month).endOf("month")
+
+    // Check if the month is within min/max constraints
+    return (
+      (!minDayjs || lastDay.isAfter(minDayjs)) &&
+      (!maxDayjs || firstDay.isBefore(maxDayjs))
+    )
   }
 
   // Create weekday headers based on the selected week start.
@@ -189,24 +232,18 @@ export const DatePicker: FC<DatePickerProps> = ({
     },
   }
 
-  // Update default icons with size-based classes
-  const sizedForwardIcon = forwardIcon
-    ? React.cloneElement(forwardIcon as React.ReactElement, {
-        className: iconSizes[size].arrows,
-      })
-    : null
+  // Simpler approach for icon sizing
+  const sizedForwardIcon = forwardIcon && (
+    <span className={iconSizes[size].arrows}>{forwardIcon}</span>
+  )
 
-  const sizedBackwardIcon = backwardIcon
-    ? React.cloneElement(backwardIcon as React.ReactElement, {
-        className: iconSizes[size].arrows,
-      })
-    : null
+  const sizedBackwardIcon = backwardIcon && (
+    <span className={iconSizes[size].arrows}>{backwardIcon}</span>
+  )
 
-  const sizedCalendarIcon = calendarIcon
-    ? React.cloneElement(calendarIcon as React.ReactElement, {
-        className: iconSizes[size].calendar,
-      })
-    : null
+  const sizedCalendarIcon = calendarIcon && (
+    <span className={iconSizes[size].calendar}>{calendarIcon}</span>
+  )
 
   const timeFormat = timeModule ? "YYYY-MM-DD HH:mm" : "YYYY-MM-DD"
 
@@ -249,6 +286,7 @@ export const DatePicker: FC<DatePickerProps> = ({
             minWidth: inputContainerRef.current?.clientWidth || "auto",
             left: 0,
           }}
+          ref={datePickerRef}
         >
           <div className="p-4 rounded-box bg-base-100 shadow">
             {showYearPicker ? (
@@ -277,81 +315,134 @@ export const DatePicker: FC<DatePickerProps> = ({
                   </div>
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="flex justify-between items-center mb-2">
-                  {backwardIcon && (
-                    <span
-                      className="cursor-pointer p-1"
-                      onClick={(e) => handleMonthChange(e as any, -1)}
-                    >
-                      {sizedBackwardIcon}
-                    </span>
-                  )}
-
-                  <div className="flex-1 flex justify-center items-center">
-                    <span className="mx-1">
-                      {currentDate
-                        ? currentDate.format("MMMM")
-                        : dayjs().locale(locale).format("MMMM")}
-                    </span>
-                    {currentDate && (
-                      <span
-                        className={cn(
-                          "mx-1",
-                          pickYear && "cursor-pointer hover:text-primary"
-                        )}
-                        onClick={handleYearClick}
-                      >
-                        {currentDate.format("YYYY")}
-                      </span>
+            ) : showMonthPicker ? (
+              <div className="w-full">
+                <div className="mb-2 flex justify-center">
+                  <span
+                    className={cn(
+                      "font-semibold",
+                      pickYear && "cursor-pointer hover:text-primary"
                     )}
-                  </div>
-
-                  {forwardIcon && (
-                    <span
-                      className="cursor-pointer p-1"
-                      onClick={(e) => handleMonthChange(e as any, 1)}
-                    >
-                      {sizedForwardIcon}
-                    </span>
-                  )}
+                    onClick={handleYearClick}
+                  >
+                    {currentDate
+                      ? currentDate.format("YYYY")
+                      : dayjs().format("YYYY")}
+                  </span>
                 </div>
-                <div className="grid grid-cols-7 gap-1 capitalize">
-                  {weekdays.map((weekday) => (
-                    <div
-                      key={weekday.full}
-                      className="p-2 text-center text-xs md:text-base whitespace-nowrap"
-                    >
-                      <span className="block md:hidden">{weekday.short}</span>
-                      <span className="hidden md:block">{weekday.full}</span>
-                    </div>
-                  ))}
-                  {Array.from({ length: blankDays }).map((_, i) => (
-                    <div key={i} className="p-2"></div>
-                  ))}
-                  {daysInMonth.map((day) => {
-                    const isSelectable = isDateSelectable(day)
+                <div className="grid grid-cols-3 gap-2">
+                  {Array.from({ length: 12 }).map((_, idx) => {
+                    const currentYear = currentDate
+                      ? currentDate.year()
+                      : dayjs().year()
+                    const isSelectable = isMonthSelectable(currentYear, idx)
                     return (
                       <button
-                        key={day.toString()}
-                        className={`p-2 rounded hover:bg-primary hover:text-primary-content whitespace-nowrap capitalize ${
-                          day.format("YYYY-MM-DD") ===
-                          dayjs(value).locale(locale).format("YYYY-MM-DD")
-                            ? "bg-primary text-primary-content"
-                            : ""
-                        } ${
-                          isSelectable ? "" : "opacity-30 cursor-not-allowed"
-                        }`}
-                        onClick={() => isSelectable && handleDateSelect(day)}
+                        key={idx}
+                        className={cn(
+                          "btn btn-sm w-full capitalize",
+                          currentDate && currentDate.month() === idx
+                            ? "btn-primary"
+                            : "btn-ghost",
+                          !isSelectable && "opacity-30 cursor-not-allowed"
+                        )}
+                        onClick={() => isSelectable && handleMonthSelect(idx)}
                         disabled={!isSelectable}
                       >
-                        {day.date()}
+                        {dayjs().month(idx).format("MMM")}
                       </button>
                     )
                   })}
                 </div>
-              </>
+              </div>
+            ) : (
+              <div className="flex flex-row gap-4">
+                <div className="flex-1">
+                  <div className="flex justify-between items-center mb-2">
+                    {backwardIcon && (
+                      <span
+                        className="cursor-pointer p-1"
+                        onClick={(e) => handleMonthChange(e as any, -1)}
+                      >
+                        {sizedBackwardIcon}
+                      </span>
+                    )}
+
+                    <div className="flex-1 flex justify-center items-center capitalize">
+                      <span
+                        className={cn(
+                          "mx-1",
+                          pickMonth && "cursor-pointer hover:text-primary"
+                        )}
+                        onClick={pickMonth ? handleMonthClick : undefined}
+                      >
+                        {currentDate
+                          ? currentDate.format("MMMM")
+                          : dayjs().locale(locale).format("MMMM")}
+                      </span>
+                      {currentDate && (
+                        <span
+                          className={cn(
+                            "mx-1",
+                            pickYear && "cursor-pointer hover:text-primary"
+                          )}
+                          onClick={pickYear ? handleYearClick : undefined}
+                        >
+                          {currentDate.format("YYYY")}
+                        </span>
+                      )}
+                    </div>
+
+                    {forwardIcon && (
+                      <span
+                        className="cursor-pointer p-1"
+                        onClick={(e) => handleMonthChange(e as any, 1)}
+                      >
+                        {sizedForwardIcon}
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1 capitalize">
+                    {weekdays.map((weekday) => (
+                      <div
+                        key={weekday.full}
+                        className="p-2 text-center text-xs md:text-base whitespace-nowrap"
+                      >
+                        <span className="block md:hidden">{weekday.short}</span>
+                        <span className="hidden md:block">{weekday.full}</span>
+                      </div>
+                    ))}
+                    {Array.from({ length: blankDays }).map((_, i) => (
+                      <div key={i} className="p-2"></div>
+                    ))}
+                    {daysInMonth.map((day) => {
+                      const isSelectable = isDateSelectable(day)
+                      return (
+                        <button
+                          key={day.toString()}
+                          className={`p-2 rounded hover:bg-primary hover:text-primary-content whitespace-nowrap capitalize ${
+                            day.format("YYYY-MM-DD") ===
+                            dayjs(value).locale(locale).format("YYYY-MM-DD")
+                              ? "bg-primary text-primary-content"
+                              : ""
+                          } ${
+                            isSelectable ? "" : "opacity-30 cursor-not-allowed"
+                          }`}
+                          onClick={() => isSelectable && handleDateSelect(day)}
+                          disabled={!isSelectable}
+                        >
+                          {day.date()}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+                {timeModule && (
+                  <div className="border-l border-base-300 pl-4">
+                    {timeModule}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

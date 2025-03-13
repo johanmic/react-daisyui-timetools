@@ -51,19 +51,20 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  plugins: [
-    async function tailwindPlugin(context, options) {
-      return {
-        name: "docusaurus-tailwindcss",
-        configurePostCss(postcssOptions) {
-          // Appends TailwindCSS and AutoPrefixer.
-          postcssOptions.plugins.push(require("tailwindcss"))
-          postcssOptions.plugins.push(require("autoprefixer"))
-          return postcssOptions
-        },
-      }
-    },
-  ],
+  // plugins: [
+  //   async function tailwindPlugin(context, options) {
+  //     return {
+  //       name: "docusaurus-tailwindcss",
+  //       configurePostCss(postcssOptions) {
+  //         // Appends TailwindCSS and AutoPrefixer.
+  //         postcssOptions.plugins.push(require("tailwindcss"))
+  //         postcssOptions.plugins.push(require("autoprefixer"))
+  //         return postcssOptions
+  //       },
+  //     }
+  //   },
+  // ],
+  plugins: ["./tailwind-config.ts"],
 
   themeConfig: {
     // Replace with your project's social card

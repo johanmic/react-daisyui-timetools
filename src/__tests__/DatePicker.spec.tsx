@@ -68,6 +68,94 @@ describe("DatePicker", () => {
       const container = screen.getByTestId("date-picker").querySelector("label")
       expect(container).toHaveClass("input-xs")
     })
+
+    it("shows month picker when month is clicked and pickMonth is true", () => {
+      render(
+        <DatePicker
+          value={new Date("2023-05-15")}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={true}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Click on the month
+      fireEvent.click(screen.getByText("May"))
+
+      // Month picker should be visible with all months
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ]
+      months.forEach((month) => {
+        expect(screen.getByText(month)).toBeInTheDocument()
+      })
+    })
+
+    it("selects month from month picker", () => {
+      render(
+        <DatePicker
+          value={new Date("2023-05-15")}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={true}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Open month picker
+      fireEvent.click(screen.getByText("May"))
+
+      // Select a different month
+      fireEvent.click(screen.getByText("Jul"))
+
+      // Calendar should show selected month
+      expect(screen.getByText("July")).toBeInTheDocument()
+
+      // Month picker should be closed
+      expect(screen.queryByText("Jan")).not.toBeInTheDocument()
+
+      // onChange should be called with the new date
+      expect(mockOnChange).toHaveBeenCalledWith("2023-07-15")
+    })
+
+    it("doesn't show month picker when month is clicked and pickMonth is false", () => {
+      render(
+        <DatePicker
+          value={new Date("2023-05-15")}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={false}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Click on the month (should do nothing since pickMonth is false)
+      fireEvent.click(screen.getByText("May"))
+
+      // Month picker should not be visible
+      expect(screen.queryByText("Jan")).not.toBeInTheDocument()
+
+      // Calendar should still be visible
+      expect(screen.getByText("Mon")).toBeInTheDocument()
+    })
   })
 
   // Calendar display tests
@@ -196,9 +284,8 @@ describe("DatePicker", () => {
       expect(monthText).toBeInTheDocument()
     })
 
-    it("navigates to the previous month when backward icon is clicked", () => {
+    it("navigates to the previous month when backward icon is clicked", async () => {
       const startDate = new Date("2023-05-15")
-      const dayjs = getDayjs("en")
 
       render(
         <DatePicker value={startDate} onChange={mockOnChange} locale="en" />
@@ -210,14 +297,87 @@ describe("DatePicker", () => {
       // Current month should be May
       expect(screen.getByText("May")).toBeInTheDocument()
 
-      // Click the backward icon
-      const backwardIcon = screen
-        .getByTestId("date-picker")
-        .querySelector("span:first-of-type")
-      fireEvent.click(backwardIcon)
+      // Get all buttons in the calendar header
+      const allButtons = screen.getAllByRole("button")
 
-      // Month should now be April
-      expect(screen.getByText("April")).toBeInTheDocument()
+      // The first clickable element in the calendar header should be the backward icon
+      // We can find it by looking at the parent element structure
+      const calendarContainer = screen.getByText("May").closest(".p-4")
+
+      if (!calendarContainer) {
+        throw new Error("Calendar container not found")
+      }
+
+      // Find the first span in the header section
+      const headerSection = calendarContainer.querySelector(
+        ".flex.justify-between"
+      )
+      const backwardIconContainer =
+        headerSection?.querySelector("span:first-child")
+
+      if (!backwardIconContainer) {
+        throw new Error("Backward icon container not found")
+      }
+
+      fireEvent.click(backwardIconContainer)
+
+      // Wait for the month to change
+      await waitFor(() => {
+        const monthElement = screen.getByText((content) => {
+          return content === "April"
+        })
+        expect(monthElement).toBeInTheDocument()
+      })
+    })
+
+    it("doesn't allow month selection when pickMonth is false", () => {
+      render(
+        <DatePicker
+          value={new Date("2023-05-15")}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={false}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Click on the month
+      fireEvent.click(screen.getByText("May"))
+
+      // Month picker should not be visible
+      expect(screen.queryByText("Jan")).not.toBeInTheDocument()
+      expect(screen.queryByText("Feb")).not.toBeInTheDocument()
+
+      // Calendar should still be visible with days
+      expect(screen.getByText("15")).toBeInTheDocument()
+    })
+
+    it("doesn't change month display when month is clicked with pickMonth=false", () => {
+      render(
+        <DatePicker
+          value={new Date("2023-05-15")}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={false}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Verify May is displayed
+      expect(screen.getByText("May")).toBeInTheDocument()
+
+      // Click on the month
+      fireEvent.click(screen.getByText("May"))
+
+      // Month should still be May (unchanged)
+      expect(screen.getByText("May")).toBeInTheDocument()
+
+      // Calendar should still show the same view
+      expect(screen.getByText("15")).toBeInTheDocument()
     })
 
     it("shows year picker when year is clicked and pickYear is true", () => {
@@ -323,6 +483,47 @@ describe("DatePicker", () => {
       disabledDates.forEach((button) => {
         expect(button).toHaveClass("opacity-30")
       })
+    })
+
+    it("respects min/max date constraints when selecting months", () => {
+      const currentDate = new Date("2023-05-15")
+      const minDate = new Date("2023-03-01")
+      const maxDate = new Date("2023-07-31")
+
+      render(
+        <DatePicker
+          value={currentDate}
+          onChange={mockOnChange}
+          locale="en"
+          pickMonth={true}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+      )
+
+      // Open calendar
+      fireEvent.click(screen.getByRole("textbox"))
+
+      // Open month picker
+      fireEvent.click(screen.getByText("May"))
+
+      // Months before March should be disabled
+      const janButton = screen.getByText("Jan").closest("button")
+      const febButton = screen.getByText("Feb").closest("button")
+      expect(janButton).toHaveClass("opacity-30")
+      expect(febButton).toHaveClass("opacity-30")
+
+      // Months after July should be disabled
+      const augButton = screen.getByText("Aug").closest("button")
+      const sepButton = screen.getByText("Sep").closest("button")
+      expect(augButton).toHaveClass("opacity-30")
+      expect(sepButton).toHaveClass("opacity-30")
+
+      // Months within range should be enabled
+      const aprButton = screen.getByText("Apr").closest("button")
+      const junButton = screen.getByText("Jun").closest("button")
+      expect(aprButton).not.toHaveClass("opacity-30")
+      expect(junButton).not.toHaveClass("opacity-30")
     })
   })
 

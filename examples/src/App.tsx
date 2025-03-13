@@ -31,6 +31,7 @@ function App() {
             <label className="label">Date with year picker</label>
             <DatePicker
               pickYear
+              pickMonth
               minDate={dayjs().subtract(10, "year").format("YYYY-MM-DD")}
               maxDate={dayjs().add(10, "year").format("YYYY-MM-DD")}
               value={date}
@@ -57,6 +58,9 @@ function App() {
               onChange={setDate}
               AMPM={true}
               locale="en"
+              dateProps={{
+                pickMonth: true,
+              }}
               placeholder="Select a date"
             />
           </div>
@@ -78,7 +82,9 @@ function App() {
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold">Start and End Date examples</h2>
+          <h2 className="text-2xl font-bold">
+            DateAndTimePicker Start and End Date examples
+          </h2>
         </div>
         <div className="space-y-4">
           <div className="form-control">
@@ -141,12 +147,12 @@ function App() {
             <div>
               <label className="label">Disabled</label>
               <TimePicker value={date} onChange={setDate} disabled />
-              <label className="label">Disabled with AM/PM</label>
+              <label className="label">Outside AMPM</label>
               <TimePicker
                 value={date}
                 onChange={setDate}
                 AMPM={true}
-                disabled
+                externalAMPM
               />
             </div>
           </div>

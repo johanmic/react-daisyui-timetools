@@ -21,11 +21,11 @@ export interface DateAndTimePickerProps {
   AMPM?: boolean
   dateProps?: Omit<
     DatePickerProps,
-    "onChange" | "locale" | "disabled" | "placeholder"
+    "onChange" | "locale" | "disabled" | "placeholder" | "value"
   >
   timeProps?: Omit<
     TimePickerProps,
-    "onChange" | "locale" | "disabled" | "placeholder"
+    "onChange" | "locale" | "disabled" | "placeholder" | "value"
   >
 }
 
@@ -100,7 +100,10 @@ export const DateAndTimePicker = ({
   }
 
   const handleTimeChange = (newTime: string) => {
-    const [hour, minute] = newTime.split(":").map(Number)
+    // const [hour, minute] = newTime.split(":").map(Number)
+    const d = dayjs(newTime)
+    const hour = d.hour()
+    const minute = d.minute()
     const roundedMinute = roundToNearest15Minutes(minute)
     let updatedDate = (dateTime ?? dayjs())
       .set("hour", hour)
@@ -194,9 +197,3 @@ export const DateAndTimePicker = ({
 }
 
 export default DateAndTimePicker
-
-/*
-
-
-    
-*/
