@@ -30,7 +30,7 @@ bun install react-daisyui-timetools
 ### DatePicker
 
 ```tsx
-import DatePicker from "react-daisyui-timetools"
+import { DatePicker } from "react-daisyui-timetools"
 ```
 
 A stylish, easy-to-use date picker.
