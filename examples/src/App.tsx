@@ -155,6 +155,19 @@ function App() {
                 externalAMPM
               />
             </div>
+
+            <div className="w-72 bg-primary/10">
+              <label className="label">Cramped Space</label>
+              <DateAndTimePicker
+                value={endDate}
+                onChange={setEndDate}
+                minDate={startDate}
+                combined
+                AMPM={false}
+                locale="en"
+                placeholder="Select a date"
+              />
+            </div>
           </div>
         </div>
       </section>

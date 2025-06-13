@@ -283,7 +283,7 @@ export const DatePicker = ({
         <div
           className={`absolute z-10 mt-1 ${calendarClassName}`}
           style={{
-            minWidth: inputContainerRef.current?.clientWidth || "auto",
+            minWidth: 390,
             left: 0,
           }}
           ref={datePickerRef}

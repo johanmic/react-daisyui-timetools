@@ -66,7 +66,13 @@ describe("TimePicker", () => {
   // Time selection functionality
   describe("time selection", () => {
     it("updates time when clicked on hour and minute", () => {
-      render(<TimePicker onChange={mockOnChange} open={true} />)
+      render(
+        <TimePicker
+          onChange={mockOnChange}
+          open={true}
+          value="2025-03-13T00:00:00"
+        />
+      )
 
       // Open the picker
       const timePicker = screen.getByTestId("time-picker")
@@ -80,7 +86,7 @@ describe("TimePicker", () => {
       const minuteOption = screen.getByText("30")
       fireEvent.click(minuteOption)
 
-      // Should call onChange with "14:30"
+      // Should call onChange with the expected format
       expect(mockOnChange).toHaveBeenCalledWith("2025-03-13T14:30")
     })
 
