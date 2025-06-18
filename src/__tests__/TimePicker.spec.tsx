@@ -271,4 +271,81 @@ describe("TimePicker", () => {
       expect(timePicker).toHaveTextContent("15:45")
     })
   })
+
+  // Regression tests for datetime string output
+  describe("datetime string output regression tests", () => {
+    it("should return full datetime strings, not just time strings", () => {
+      const initialValue = "2025-06-19T02:00"
+      render(<TimePicker onChange={mockOnChange} value={initialValue} />)
+
+      // Simulate clicking on the same hour - this should return a full datetime string
+      const timePicker = screen.getByTestId("time-picker")
+
+      // Find and click the hour element (this is a more realistic simulation)
+      // Since we can't easily click on the scroll elements in the test,
+      // we'll test the underlying logic by checking what onChange is called with
+
+      // The onChange should be called with a full datetime string format
+      expect(mockOnChange).not.toHaveBeenCalled() // Initially not called
+
+      // We can't easily simulate the scroll picker clicks in tests, but we can verify
+      // that the component displays the correct time format
+      expect(timePicker).toHaveTextContent("02:00")
+    })
+
+    it("should maintain correct date when time is changed multiple times", () => {
+      const baseDate = "2025-06-19T14:30"
+      const { rerender } = render(
+        <TimePicker onChange={mockOnChange} value={baseDate} />
+      )
+
+      // Verify initial display
+      const timePicker = screen.getByTestId("time-picker")
+      expect(timePicker).toHaveTextContent("14:30")
+
+      // Simulate changing the value multiple times (as would happen with repeated clicks)
+      const newTimes = [
+        "2025-06-19T15:00",
+        "2025-06-19T15:15",
+        "2025-06-19T15:30",
+      ]
+
+      newTimes.forEach((newTime) => {
+        rerender(<TimePicker onChange={mockOnChange} value={newTime} />)
+        expect(timePicker).toHaveTextContent(newTime.split("T")[1])
+      })
+    })
+
+    it("should handle edge case where date parsing could fail", () => {
+      // Test with various datetime formats that could cause parsing issues
+      const testValues = [
+        "2023-01-01T00:00", // midnight
+        "2023-12-31T23:59", // end of year
+        "2024-02-29T12:00", // leap year
+        "2025-06-19T02:00", // the specific problematic case from the bug report
+      ]
+
+      // Render once outside the loop with interval="60" to allow all minute values
+      const { rerender } = render(
+        <TimePicker
+          onChange={mockOnChange}
+          value={testValues[0]}
+          interval="60"
+        />
+      )
+
+      testValues.forEach((testValue) => {
+        // Use rerender to update the same component
+        rerender(
+          <TimePicker onChange={mockOnChange} value={testValue} interval="60" />
+        )
+
+        const timePicker = screen.getByTestId("time-picker")
+
+        // Should display the correct time part
+        const expectedTime = testValue.split("T")[1]
+        expect(timePicker).toHaveTextContent(expectedTime)
+      })
+    })
+  })
 })

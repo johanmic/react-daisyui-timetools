@@ -294,7 +294,6 @@ export function TimePicker({
           .set("hour", parseInt(finalHour))
           .set("minute", parseInt(newMinute))
           .format("YYYY-MM-DDTHH:mm")
-
         onChange(newDate)
 
         if (isHourClick && closeOnHour) {
@@ -306,22 +305,6 @@ export function TimePicker({
     },
     [AMPM, onChange, closeOnHour, closeOnMinute, period, value]
   )
-
-  // const togglePeriod = useCallback(() => {
-  //   const newPeriod = period === "AM" ? "PM" : "AM"
-  //   setPeriod(newPeriod)
-
-  //   // Convert hour to 24-hour format based on the new period
-  //   let finalHour = hour
-  //   const hourNum = parseInt(hour)
-  //   if (newPeriod === "PM" && hourNum !== 12) {
-  //     finalHour = (hourNum + 12).toString().padStart(2, "0")
-  //   } else if (newPeriod === "AM" && hourNum === 12) {
-  //     finalHour = "00"
-  //   }
-  //   console.log({ finalHour, minute })
-  //   onChange(`${finalHour}:${minute}`)
-  // }, [hour, minute, period, onChange])
 
   return (
     <div

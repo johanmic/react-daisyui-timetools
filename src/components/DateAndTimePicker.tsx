@@ -100,10 +100,10 @@ export const DateAndTimePicker = ({
   }
 
   const handleTimeChange = (newTime: string) => {
-    // Parse the time string directly instead of using dayjs
-    const [hourStr, minuteStr] = newTime.split(":")
-    const hour = parseInt(hourStr, 10)
-    const minute = parseInt(minuteStr, 10)
+    // Parse the full datetime string properly using dayjs
+    const parsedTime = dayjs(newTime)
+    const hour = parsedTime.hour()
+    const minute = parsedTime.minute()
 
     const roundedMinute = roundToNearest15Minutes(minute)
     let updatedDate = (dateTime ?? dayjs())
