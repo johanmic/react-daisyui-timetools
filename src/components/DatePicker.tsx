@@ -279,7 +279,7 @@ export const DatePicker = ({
         />
         {sizedCalendarIcon}
       </label>
-      {show && (
+      {show && !disabled && (
         <div
           className={`absolute z-10 mt-1 ${calendarClassName}`}
           style={{

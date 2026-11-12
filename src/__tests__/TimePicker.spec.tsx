@@ -9,6 +9,30 @@ describe("TimePicker", () => {
     jest.clearAllMocks()
   })
 
+  it("hides an open time dropdown while disabled", () => {
+    const props = { value: "2026-11-12T10:00", onChange: mockOnChange, open: true }
+    const { rerender } = render(<TimePicker {...props} />)
+
+    expect(screen.getByText("11")).toBeInTheDocument()
+    rerender(<TimePicker {...props} disabled />)
+
+    expect(screen.queryByText("11")).not.toBeInTheDocument()
+    expect(mockOnChange).not.toHaveBeenCalled()
+
+    rerender(<TimePicker {...props} />)
+    fireEvent.click(screen.getByText("11"))
+    expect(mockOnChange).toHaveBeenCalledWith("2026-11-12T11:00")
+  })
+
+  it("ignores time choices in the inline disabled picker", () => {
+    render(
+      <TimePicker value="2026-11-12T10:00" onChange={mockOnChange} hideInput disabled />
+    )
+
+    fireEvent.click(screen.getByText("11"))
+    expect(mockOnChange).not.toHaveBeenCalled()
+  })
+
   // Rendering tests
   describe("rendering", () => {
     it("renders with default props", () => {
