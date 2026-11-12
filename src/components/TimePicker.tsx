@@ -269,6 +269,8 @@ export function TimePicker({
       isHourClick: boolean,
       newPeriod?: "AM" | "PM"
     ) => {
+      if (disabled) return
+
       // Use the provided period or fall back to the current state
       const activePeriod = newPeriod || period
 
@@ -303,7 +305,7 @@ export function TimePicker({
         }
       }
     },
-    [AMPM, onChange, closeOnHour, closeOnMinute, period, value]
+    [AMPM, onChange, closeOnHour, closeOnMinute, disabled, period, value]
   )
 
   return (
@@ -340,6 +342,7 @@ export function TimePicker({
                     "badge join-item",
                     p === period ? "badge-primary" : "badge-ghost"
                   )}
+                  disabled={disabled}
                   onClick={() => {
                     const newPeriod = p as "AM" | "PM"
                     handleTimeSelection(hour, minute, true, newPeriod)
@@ -352,7 +355,7 @@ export function TimePicker({
           )}
         </div>
       )}
-      {(open || hideInput) && (
+      {((open && !disabled) || hideInput) && (
         <div
           className={cn(
             "absolute grid left-0 right-0",

@@ -10,6 +10,21 @@ describe("DatePicker", () => {
     jest.clearAllMocks()
   })
 
+  it("hides an open calendar while disabled", () => {
+    const props = { value: "2026-11-12", onChange: mockOnChange, open: true }
+    const { rerender } = render(<DatePicker {...props} />)
+
+    expect(screen.getByRole("button", { name: "13" })).toBeInTheDocument()
+    rerender(<DatePicker {...props} disabled />)
+
+    expect(screen.queryByRole("button", { name: "13" })).not.toBeInTheDocument()
+    expect(mockOnChange).not.toHaveBeenCalled()
+
+    rerender(<DatePicker {...props} />)
+    fireEvent.click(screen.getByRole("button", { name: "13" }))
+    expect(mockOnChange).toHaveBeenCalledWith("2026-11-13")
+  })
+
   // Rendering tests
   describe("rendering", () => {
     it("renders with default props", () => {
